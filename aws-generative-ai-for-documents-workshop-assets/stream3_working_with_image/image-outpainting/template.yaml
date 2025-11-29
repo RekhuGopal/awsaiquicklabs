@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Image Outpainting 
+Parameters:
+  S3BucketName:
+    Description: "S3 bucket name"
+    Type: String
+    Default: 'image-outpainting-cqlabs'
+
+  ImagePrefix:
+    Description: "S3 prefix for image  files"
+    Type: String
+    Default: 'image-files'
+  
+  GeneratedImagePrefix:
+    Description: "S3 prefix for masked image  files"
+    Type: String
+    Default: 'generated-image-files'    
+
+  BedrockModelId:
+    Description: Amazon Bedrock Model Id
+    Type: String
+    Default: 'amazon.titan-image-generator-v1'   
+    
+
+Globals:
+  Function:
+    Runtime: python3.13
+    Timeout: 900
+
+
+Resources:
+  ImageBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  GenerateImageOutpainting:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/generate-image/    
+      Handler: app.lambda_handler
+      MemorySize: 512
+      EphemeralStorage:
+        Size: 1024      
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+          IMAGE_PREFIX: !Ref ImagePrefix
+          GENERATED_IMAGE_PREFIX: !Ref GeneratedImagePrefix
+          BEDROCK_MODEL_ID: !Ref BedrockModelId          
+      FunctionUrlConfig:
+        AuthType: AWS_IAM
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "bedrock:*"
+              Resource: "*"  
+            - Effect: Allow
+              Action:
+                - rekognition:DetectLabels
+              Resource: "*"
+
+Outputs:
+  ImageBucket:
+    Description: Image S3 Bucket
+    Value: !Ref ImageBucket
+  ImagePrefix:
+    Description: Image prefix 
+    Value: !Ref ImagePrefix
+  FunctionUrlEndpoint:
+    Description: Lambda Functions URL Endpoint
+    Value: !GetAtt GenerateImageOutpaintingUrl.FunctionUrl

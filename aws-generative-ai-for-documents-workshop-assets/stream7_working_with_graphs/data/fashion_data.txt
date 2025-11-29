@@ -1,0 +1,66 @@
+# Nodes
+# Type, Property1, Property2, Property3, Property4, Property5
+product, shirt, blue, Fashionista, M, 29.99
+product, jeans, black, TrendyDenim, 32, 49.99
+product, shoes, white, WalkEasy, 8, 69.99
+product, hat, brown, TopHead, L, 19.99
+product, jacket, red, Fashionista, L, 59.99
+product, belt, black, TopHead, M, 14.99
+product, scarf, green, WalkEasy, OneSize, 19.99
+product, sunglasses, black, TrendyDenim, OneSize, 24.99
+product, watch, silver, TimeTrend, OneSize, 99.99
+product, socks, white, ComfyFeet, L, 4.99
+product, bag, brown, BaggyStyle, M, 44.99
+product, tie, blue, Fashionista, OneSize, 19.99
+product, skirt, black, TrendyDenim, S, 29.99
+product, sandals, brown, WalkEasy, 7, 39.99
+product, gloves, black, ColdGuard, M, 14.99
+product, necklace, gold, JewelSpark, OneSize, 49.99
+brand, Fashionista, Italy
+brand, TrendyDenim, USA
+brand, WalkEasy, Spain
+brand, TopHead, UK
+brand, TimeTrend, Switzerland
+brand, ComfyFeet, USA
+brand, BaggyStyle, Italy
+brand, ColdGuard, Canada
+brand, JewelSpark, France
+category, Clothing
+category, Footwear
+category, Accessories
+category, Jewelry
+
+# Edges
+# FromType, FromProperty, EdgeType, ToType, ToProperty
+product, shirt, belongs_to_brand, brand, Fashionista
+product, jeans, belongs_to_brand, brand, TrendyDenim
+product, shoes, belongs_to_brand, brand, WalkEasy
+product, hat, belongs_to_brand, brand, TopHead
+product, jacket, belongs_to_brand, brand, Fashionista
+product, belt, belongs_to_brand, brand, TopHead
+product, scarf, belongs_to_brand, brand, WalkEasy
+product, sunglasses, belongs_to_brand, brand, TrendyDenim
+product, watch, belongs_to_brand, brand, TimeTrend
+product, socks, belongs_to_brand, brand, ComfyFeet
+product, bag, belongs_to_brand, brand, BaggyStyle
+product, tie, belongs_to_brand, brand, Fashionista
+product, skirt, belongs_to_brand, brand, TrendyDenim
+product, sandals, belongs_to_brand, brand, WalkEasy
+product, gloves, belongs_to_brand, brand, ColdGuard
+product, necklace, belongs_to_brand, brand, JewelSpark
+product, shirt, belongs_to_category, category, Clothing
+product, jeans, belongs_to_category, category, Clothing
+product, shoes, belongs_to_category, category, Footwear
+product, hat, belongs_to_category, category, Accessories
+product, jacket, belongs_to_category, category, Clothing
+product, belt, belongs_to_category, category, Accessories
+product, scarf, belongs_to_category, category, Clothing
+product, sunglasses, belongs_to_category, category, Accessories
+product, watch, belongs_to_category, category, Accessories
+product, socks, belongs_to_category, category, Clothing
+product, bag, belongs_to_category, category, Accessories
+product, tie, belongs_to_category, category, Clothing
+product, skirt, belongs_to_category, category, Clothing
+product, sandals, belongs_to_category, category, Footwear
+product, gloves, belongs_to_category, category, Clothing
+product, necklace, belongs_to_category, category, Jewelry

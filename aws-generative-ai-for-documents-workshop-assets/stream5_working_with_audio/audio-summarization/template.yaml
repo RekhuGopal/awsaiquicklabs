@@ -1,0 +1,150 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Audio summarization 
+Parameters:
+  S3BucketName:
+    Description: "S3 bucket name"
+    Type: String
+    Default: 'audiosummarization'
+
+  AudioPrefix:
+    Description: "S3 prefix for audio  files"
+    Type: String
+    Default: 'audio-files'
+
+  TranscriptPrefix:
+    Description: "S3 prefix for transcript files"
+    Type: String
+    Default: 'transcript-files'
+    
+
+  BedrockModelId:
+    Description: Amazon Bedrock Model Id
+    Type: String
+    Default: 'anthropic.claude-3-sonnet-20240229-v1:0'   
+    
+  AudioFileURLExpiration:
+    Description: Pre-signed url expiration
+    Type: Number
+    Default: 86400    
+
+
+Globals:
+  Function:
+    Runtime: python3.9
+    Timeout: 900
+
+
+Resources:
+  AudioBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  GenerateTranscript:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/generate-transcript/    
+      Handler: app.lambda_handler
+      MemorySize: 128
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+          AUDIO_PREFIX: !Ref AudioPrefix
+          TRANSCRIPT_PREFIX: !Ref TranscriptPrefix
+          PODCAST_TABLE: !Ref PodcastSummaryTable   
+          PRESIGNED_URL_EXPIRATION: !Ref AudioFileURLExpiration
+
+      Events:
+        AudioCreated:
+          Type: S3
+          Properties:
+            Bucket: !Ref AudioBucket    
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: !Sub ${AudioPrefix}/ 
+                
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "transcribe:StartTranscriptionJob"
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - "dynamodb:PutItem"
+              Resource:
+                - !GetAtt PodcastSummaryTable.Arn              
+              
+  SummarizeTranscript:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/summarize-audio-transcript/
+      Handler: app.lambda_handler
+      MemorySize: 128
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+          TRANSCRIPT_PREFIX: !Ref TranscriptPrefix
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          PODCAST_TABLE: !Ref PodcastSummaryTable
+        
+      Events:
+        TranscriptCreated:
+          Type: S3
+          Properties:
+            Bucket: !Ref AudioBucket    
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: !Sub ${TranscriptPrefix}/ 
+                  - Name: suffix
+                    Value: ".json"
+                
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - S3CrudPolicy:
+            BucketName: !Sub ${S3BucketName}-bucket-${AWS::AccountId}
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "bedrock:*"
+              Resource: "*"  
+            - Effect: Allow
+              Action:
+                - "dynamodb:PutItem"
+                - "dynamodb:UpdateItem"
+              Resource:
+                - !GetAtt PodcastSummaryTable.Arn
+              
+  PodcastSummaryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: fileName
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: fileName
+          KeyType: HASH
+      TableName: PodcastSummaryTable
+      SSESpecification:
+        SSEEnabled: true              
+
+Outputs:
+  AudioBucket:
+    Description: Audio  S3 Bucket
+    Value: !Ref AudioBucket

@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template with Kinesis, Firehose, Glue, Lambda and S3 integration.'
+
+Resources:
+
+  LogsIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'logsllmrole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'firehose.amazonaws.com'  
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+  
+  LogsKinesisDataStream:
+    Type: "AWS::Kinesis::Stream"
+    Properties: 
+      Name: "logs_ingestion_to_firehose"
+      ShardCount: 1
+
+  LogsGlueDatabase:
+    Type: "AWS::Glue::Database"
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: "logs_glue_db"
+        Description: "Glue database for JSON to Parquet transformation"
+
+  LogsGlueTable:
+    Type: "AWS::Glue::Table"
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref LogsGlueDatabase
+      TableInput:
+        Name: "logs_glue_table"
+        Description: "Glue table for Parquet"
+        StorageDescriptor:
+          Columns:
+            - 
+              Name: "timestamp"
+              Type: "string"
+            - 
+              Name: "log_level"
+              Type: "string"
+            - 
+              Name: "message"
+              Type: "string"
+            - 
+              Name: "host"
+              Type: "string"
+            - 
+              Name: "thread"
+              Type: "int"
+            - 
+              Name: "request_id"
+              Type: "string"
+          InputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+          Location: !Sub "s3://${LogsS3Bucket}/logs/"
+          SerdeInfo:
+            SerializationLibrary: "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+
+  LogsS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: 
+        !Sub
+          - "s3logsbucket-${Region}-${StackId}"
+          - Region: !Ref "AWS::Region"
+            StackId: !Select [2, !Split ["/", !Ref "AWS::StackId"]]
+
+  LogsKinesisFirehoseDeliveryStream:
+    Type: "AWS::KinesisFirehose::DeliveryStream"
+    Properties:
+      DeliveryStreamType: "KinesisStreamAsSource"
+      KinesisStreamSourceConfiguration:
+        KinesisStreamARN: 
+          Fn::GetAtt: 
+            - "LogsKinesisDataStream"
+            - "Arn"
+        RoleARN: !GetAtt LogsIAMRole.Arn
+      ExtendedS3DestinationConfiguration:
+        BucketARN:
+          Fn::GetAtt:
+            - "LogsS3Bucket"
+            - "Arn"
+        Prefix: "logs/"
+        ErrorOutputPrefix: "logserror/"
+        RoleARN: !GetAtt LogsIAMRole.Arn
+        BufferingHints:
+          SizeInMBs: "64"
+          IntervalInSeconds: "60"
+        CompressionFormat: "UNCOMPRESSED"
+        DataFormatConversionConfiguration:
+          Enabled: "true"
+          InputFormatConfiguration:
+            Deserializer:
+              OpenXJsonSerDe: {}
+          OutputFormatConfiguration:
+            Serializer:
+              ParquetSerDe: {}
+          SchemaConfiguration:
+            CatalogId: !Ref AWS::AccountId
+            DatabaseName: !Ref LogsGlueDatabase
+            TableName: !Ref LogsGlueTable
+            RoleARN: !GetAtt LogsIAMRole.Arn
+      
+Outputs:
+  LogsS3BucketName:
+    Value:
+      Ref: "LogsS3Bucket"
+    Description: "Name of the S3 bucket"

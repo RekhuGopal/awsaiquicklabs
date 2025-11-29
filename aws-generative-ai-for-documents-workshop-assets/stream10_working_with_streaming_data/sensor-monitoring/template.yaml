@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Generate recommendations from streaming 
+Parameters:
+
+  NotificationSNSTopicName:
+    Description: 'Lambda will send notification email to this SNS topic'
+    Type: String
+    Default: 'notification-topic'
+    
+  NotificationEmail:
+    Description: 'Notification email will be sent to this email address'
+    Type: String
+
+  BedrockModelId:
+    Description: Amazon Bedrock Model Id
+    Type: String
+    Default: 'anthropic.claude-3-sonnet-20240229-v1:0'   
+    
+Globals:
+  Function:
+    Runtime: python3.9
+    Timeout: 900
+
+
+Resources:
+
+  GenerateRecommendations:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/generate-recommendations/    
+      Handler: app.lambda_handler
+      MemorySize: 128
+      Environment:
+        Variables:
+          JOBS_TABLE: !Ref JobsTable   
+          SNS_TOPIC_ARN: !Ref NotificationSNSTopic
+          BEDROCK_MODEL_ID: !Ref BedrockModelId          
+
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt SensorKinesisStream.Arn
+            BatchSize: 10
+            StartingPosition: LATEST
+            BisectBatchOnFunctionError: true
+            MaximumRetryAttempts: 1
+            ParallelizationFactor: 5
+             
+
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - KinesisStreamReadPolicy:
+            StreamName: !Ref SensorKinesisStream
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt NotificationSNSTopic.TopicName
+        - DynamoDBReadPolicy:
+            TableName: !Ref JobsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "bedrock:*"
+              Resource: "*"             
+
+  SensorKinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      ShardCount: 1
+      
+  NotificationSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref NotificationSNSTopicName
+      Subscription: 
+        - Protocol: email
+          Endpoint: !Ref NotificationEmail      
+      
+  JobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: N
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+      TableName: JobsTable
+      SSESpecification:
+        SSEEnabled: true              
+
+Outputs:
+  JobsTable:
+    Description: Jobs DynamoDB Table
+    Value: !Ref JobsTable
+    
+  SensorKinesisStream:
+    Description: Kinesis stream 
+    Value: !Ref SensorKinesisStream

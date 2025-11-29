@@ -1,0 +1,49 @@
+Parameters:
+  ExistingDBSubnetGroupName:
+    Description: "The name of the existing DB subnet group for the Neptune cluster."
+    Type: "String"
+    
+  VpcId:
+    Type: String
+    Description: "The VPC ID where resources will be created."
+
+Resources:
+  NeptuneDBCluster:
+    Type: "AWS::Neptune::DBCluster"
+    Properties:
+      DBClusterIdentifier: "my-neptune-cluster"
+      IamAuthEnabled: true
+      StorageEncrypted: true
+      IamAuthEnabled: false
+      VpcSecurityGroupIds:
+        - !Ref NeptuneSecurityGroup
+      DBSubnetGroupName: !Ref ExistingDBSubnetGroupName
+
+  NeptuneDBInstance:
+    Type: "AWS::Neptune::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "my-neptune-instance"
+      DBClusterIdentifier: !Ref NeptuneDBCluster
+      DBInstanceClass: "db.r5.large" # Choose an appropriate instance type
+
+  NeptuneSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Security Group for Neptune Cluster"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: "8182"
+          ToPort: "8182"
+          CidrIp: "0.0.0.0/0" # Adjust this to restrict access
+
+Outputs:
+  ClusterEndpoint:
+    Description: "Neptune Cluster Endpoint"
+    Value: !GetAtt NeptuneDBCluster.Endpoint
+  ClusterPort:
+    Description: "Neptune Cluster Port"
+    Value: !GetAtt NeptuneDBCluster.Port
+  ClusterReadEndpoint:
+    Description: "Neptune Cluster Read Endpoint"
+    Value: !GetAtt NeptuneDBCluster.ReadEndpoint

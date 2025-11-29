@@ -1,0 +1,101 @@
+﻿claim_id,claim_num,patient_name,service_type,start_date,end_date,amount,provider_name,facility_name,policy_type,illness,status,age
+1,A784081,Joanne Springer,Daily Activities ,1/1/22,1/31/22,3100,Leonard Poole,Fredericksburg Assisted Living,Disability ,Cancer,Not Paid,86
+2,A534851,Amelia Manning,Medications ,1/1/22,1/31/22,4500,Faith Ross,Bethel Helping Hands,Chronical ,Cancer,Not Paid,90
+3,A110857,Victor Langdon,Doctor Visit,1/1/22,1/31/22,5500,Leonard Poole,Brighter Living Assisted Living,Disability ,Fracture ,Paid,86
+4,A362350,Peter Dickens,Daily Activities ,1/1/22,1/31/22,5700,Austin Mitchell,Cardinal Senior Living,Disability ,Fracture ,Not Paid,97
+5,A797402,Trevor Sanderson,Pysiotherephy,1/1/22,1/31/22,4400,Dominic James,Bethel Helping Hands,Disability ,Alzheimer,Paid,74
+6,A964973,Joe Nash,Medications ,1/1/22,1/31/22,4600,Jason Brown,English Meadows Louisa Campus,Disability ,Alzheimer,Paid,99
+7,A498578,Angela Slater,Pysiotherephy,1/1/22,1/31/22,4600,Lily Langdon,Cardinal Senior Living,Chronical ,Spinal,Paid,76
+8,A971629,Christian Hudson,Pysiotherephy,1/1/22,1/31/22,3700,Angela Ball,Cardinal Senior Living,Disability ,Dementia,Paid,93
+9,A882118,Hannah Clarkson,Daily Activities ,1/1/22,1/31/22,4300,Steven Morrison,English Meadows Louisa Campus,Disability ,Spinal,Paid,73
+10,A986168,Robert Edmunds,Daily Activities ,1/1/22,1/31/22,5900,Elizabeth Taylor,Cardinal Senior Living,Disability ,Spinal,Not Paid,85
+11,A744533,Ella Skinner,Daily Activities ,1/1/22,1/31/22,4600,Jason Brown,Cardinal Senior Living,Chronical ,Alzheimer,Not Paid,81
+12,A141498,Bernadette Bailey,Pysiotherephy,1/1/22,1/31/22,5000,Jason Brown,Bethel Helping Hands,Disability ,Alzheimer,Paid,78
+13,A511511,Irene Gray,Pysiotherephy,1/1/22,1/31/22,5600,Faith Ross,Bethel Helping Hands,Chronical ,Alzheimer,Not Paid,88
+14,A685035,Amy Chapman,Medications ,1/1/22,1/31/22,5800,Lily Langdon,English Meadows Louisa Campus,Disability ,Alzheimer,Paid,84
+15,A270874,Fiona Fraser,Pysiotherephy,1/1/22,1/31/22,5600,Steven Morrison,Bethel Helping Hands,Chronical ,Cancer,Not Paid,80
+16,A374512,Anthony Howard,Doctor Visit,1/1/22,1/31/22,3600,Angela Ball,Fredericksburg Assisted Living,Disability ,Fracture ,Paid,78
+17,A916727,Paul Smith,Medications ,1/1/22,1/31/22,3300,Leonard Poole,Bethel Helping Hands,Disability ,Cancer,Not Paid,81
+18,A133106,Ian Lawrence,Pysiotherephy,1/1/22,1/31/22,3600,Dominic James,Bethel Helping Hands,Chronical ,Spinal,Paid,91
+19,A239900,Diana MacDonald,Daily Activities ,1/1/22,1/31/22,4700,Dominic James,Fredericksburg Assisted Living,Disability ,Cancer,Paid,78
+20,A850017,Charles Mills,Daily Activities ,1/1/22,1/31/22,4100,Angela Ball,Bethel Helping Hands,Disability ,Cancer,Not Paid,96
+21,A620430,Alexander Cornish,Medications ,1/1/22,1/31/22,4600,Elizabeth Taylor,Cardinal Senior Living,Chronical ,Dementia,Paid,91
+22,A266607,Edward Clarkson,Medications ,1/1/22,1/31/22,4700,Lily Langdon,Fredericksburg Assisted Living,Disability ,Spinal,Paid,71
+23,A347398,Katherine Brown,Daily Activities ,1/1/22,1/31/22,4900,Angela Ball,Bethel Helping Hands,Disability ,Spinal,Paid,73
+24,A347932,Trevor Davies,Doctor Visit,1/1/22,1/31/22,3200,Dominic James,Bethel Helping Hands,Chronical ,Cancer,Paid,89
+25,A273836,Rachel Alsop,Pysiotherephy,1/1/22,1/31/22,5900,Leonard Poole,English Meadows Louisa Campus,Chronical ,Fracture ,Paid,91
+26,A404791,Blake Watson,Pysiotherephy,1/1/22,1/31/22,3700,Sarah Campbell,English Meadows Louisa Campus,Disability ,Cancer,Paid,77
+27,A770079,Yvonne Mathis,Doctor Visit,1/1/22,1/31/22,3900,Lily Langdon,Cardinal Senior Living,Chronical ,Cancer,Not Paid,74
+28,A360197,John Langdon,Pysiotherephy,1/1/22,1/31/22,4800,Faith Ross,English Meadows Louisa Campus,Disability ,Alzheimer,Not Paid,79
+29,A143760,John Ince,Daily Activities ,1/1/22,1/31/22,3000,Jason Brown,English Meadows Louisa Campus,Disability ,Spinal,Not Paid,80
+30,A161644,Joseph Jackson,Medications ,1/1/22,1/31/22,3500,Sarah Campbell,English Meadows Louisa Campus,Chronical ,Cancer,Paid,97
+31,A595918,Jan Gill,Medications ,1/1/22,1/31/22,6000,Austin Mitchell,Cardinal Senior Living,Disability ,Spinal,Paid,75
+32,A735084,Jane Clarkson,Medications ,1/1/22,1/31/22,4900,Elizabeth Taylor,Fredericksburg Assisted Living,Chronical ,Spinal,Not Paid,83
+33,A216600,Grace Simpson,Doctor Visit,1/1/22,1/31/22,5100,Sarah Campbell,Brighter Living Assisted Living,Chronical ,Fracture ,Paid,76
+34,A828897,Mary Grant,Daily Activities ,1/1/22,1/31/22,3600,Sarah Campbell,Bethel Helping Hands,Chronical ,Alzheimer,Not Paid,75
+35,A782253,Sonia Avery,Daily Activities ,1/1/22,1/31/22,4600,Sarah Campbell,Fredericksburg Assisted Living,Chronical ,Alzheimer,Paid,90
+36,A905594,Trevor May,Pysiotherephy,1/1/22,1/31/22,5100,Sarah Campbell,Brighter Living Assisted Living,Chronical ,Cancer,Paid,88
+37,A931884,Steven Pullman,Medications ,1/1/22,1/31/22,5400,Steven Morrison,Bethel Helping Hands,Chronical ,Dementia,Paid,73
+38,A709433,Blake Edmunds,Pysiotherephy,1/1/22,1/31/22,4200,Faith Ross,English Meadows Louisa Campus,Chronical ,Alzheimer,Not Paid,81
+39,A119686,Owen Hudson,Daily Activities ,1/1/22,1/31/22,4700,Lily Langdon,Cardinal Senior Living,Chronical ,Alzheimer,Not Paid,88
+40,A954890,Alexander Mitchell,Medications ,1/1/22,1/31/22,3400,Jason Brown,Bethel Helping Hands,Chronical ,Alzheimer,Paid,85
+41,A823913,Sarah Berry,Doctor Visit,1/1/22,1/31/22,4600,Steven Morrison,Brighter Living Assisted Living,Chronical ,Cancer,Not Paid,95
+42,A602190,Jonathan Lyman,Pysiotherephy,1/1/22,1/31/22,4000,Angela Ball,Bethel Helping Hands,Chronical ,Dementia,Paid,90
+43,A610663,Phil Lewis,Daily Activities ,1/1/22,1/31/22,4400,Austin Mitchell,Brighter Living Assisted Living,Disability ,Spinal,Not Paid,72
+44,A102169,Audrey Lewis,Pysiotherephy,1/1/22,1/31/22,5000,Jason Brown,Brighter Living Assisted Living,Chronical ,Spinal,Not Paid,71
+45,A489363,James Gray,Doctor Visit,1/1/22,1/31/22,5400,Dominic James,Fredericksburg Assisted Living,Chronical ,Alzheimer,Not Paid,71
+46,A750058,Andrew Chapman,Pysiotherephy,1/1/22,1/31/22,3500,Faith Ross,English Meadows Louisa Campus,Chronical ,Dementia,Paid,76
+47,A944418,Leah Dickens,Doctor Visit,1/1/22,1/31/22,4300,Lily Langdon,Cardinal Senior Living,Disability ,Alzheimer,Not Paid,81
+48,A723227,Phil Harris,Daily Activities ,1/1/22,1/31/22,5100,Jason Brown,Brighter Living Assisted Living,Disability ,Fracture ,Paid,73
+49,A299447,Austin McDonald,Doctor Visit,1/1/22,1/31/22,3600,Sarah Campbell,Cardinal Senior Living,Chronical ,Fracture ,Paid,99
+50,A837537,Joshua Kelly,Doctor Visit,1/1/22,1/31/22,3400,Austin Mitchell,Fredericksburg Assisted Living,Disability ,Spinal,Paid,76
+51,A167689,Stephen Hill,Daily Activities ,1/1/22,1/31/22,3900,Steven Morrison,Cardinal Senior Living,Chronical ,Cancer,Not Paid,74
+52,A476252,Rose Coleman,Doctor Visit,1/1/22,1/31/22,4300,Leonard Poole,Fredericksburg Assisted Living,Disability ,Fracture ,Not Paid,73
+53,A338542,Robert Bailey,Daily Activities ,1/1/22,1/31/22,5200,Lily Langdon,English Meadows Louisa Campus,Disability ,Dementia,Paid,91
+54,A421715,Jack Hamilton,Medications ,1/1/22,1/31/22,4200,Sarah Campbell,Cardinal Senior Living,Disability ,Cancer,Not Paid,93
+55,A699227,Una Fraser,Doctor Visit,1/1/22,1/31/22,5200,Angela Ball,Cardinal Senior Living,Disability ,Cancer,Paid,84
+56,A371096,Joshua Duncan,Pysiotherephy,1/1/22,1/31/22,4200,Faith Ross,Brighter Living Assisted Living,Disability ,Dementia,Not Paid,83
+57,A182493,Jack Poole,Medications ,1/1/22,1/31/22,3600,Angela Ball,Fredericksburg Assisted Living,Disability ,Fracture ,Paid,77
+58,A898920,Gordon Ince,Pysiotherephy,1/1/22,1/31/22,3300,Angela Ball,Cardinal Senior Living,Disability ,Alzheimer,Not Paid,73
+59,A340856,Stewart McGrath,Daily Activities ,1/1/22,1/31/22,3400,Faith Ross,Cardinal Senior Living,Disability ,Cancer,Paid,82
+60,A103389,Jack Gray,Doctor Visit,1/1/22,1/31/22,4300,Faith Ross,Cardinal Senior Living,Chronical ,Fracture ,Not Paid,73
+61,A974817,Nathan Dyer,Doctor Visit,1/1/22,1/31/22,5700,Steven Morrison,Brighter Living Assisted Living,Disability ,Cancer,Paid,88
+62,A571022,Sarah Allan,Pysiotherephy,1/1/22,1/31/22,5900,Angela Ball,Cardinal Senior Living,Chronical ,Spinal,Not Paid,93
+63,A265986,Audrey Gibson,Pysiotherephy,1/1/22,1/31/22,3000,Lily Langdon,Fredericksburg Assisted Living,Disability ,Spinal,Paid,89
+64,A116221,Olivia Nolan,Pysiotherephy,1/1/22,1/31/22,3000,Faith Ross,Bethel Helping Hands,Disability ,Cancer,Paid,85
+65,A427322,Sarah Bailey,Daily Activities ,1/1/22,1/31/22,3100,Elizabeth Taylor,Cardinal Senior Living,Disability ,Alzheimer,Not Paid,78
+66,A541427,Adam McDonald,Daily Activities ,1/1/22,1/31/22,4500,Austin Mitchell,English Meadows Louisa Campus,Chronical ,Fracture ,Paid,71
+67,A413760,Paul Allan,Pysiotherephy,1/1/22,1/31/22,4000,Faith Ross,English Meadows Louisa Campus,Disability ,Alzheimer,Paid,80
+68,A530387,Michelle Rutherford,Doctor Visit,1/1/22,1/31/22,5600,Leonard Poole,Bethel Helping Hands,Disability ,Dementia,Paid,81
+69,A209019,Dylan Walker,Medications ,1/1/22,1/31/22,3700,Jason Brown,Brighter Living Assisted Living,Chronical ,Dementia,Not Paid,71
+70,A227090,William Clark,Medications ,1/1/22,1/31/22,3100,Elizabeth Taylor,English Meadows Louisa Campus,Disability ,Spinal,Paid,93
+71,A744347,Jessica Newman,Medications ,1/1/22,1/31/22,5900,Sarah Campbell,Cardinal Senior Living,Disability ,Alzheimer,Not Paid,70
+72,A980796,Molly White,Daily Activities ,1/1/22,1/31/22,5900,Leonard Poole,Fredericksburg Assisted Living,Chronical ,Fracture ,Paid,89
+73,A987152,Madeleine Mitchell,Medications ,1/1/22,1/31/22,5600,Sarah Campbell,Bethel Helping Hands,Chronical ,Cancer,Not Paid,86
+74,A851085,Diane Lewis,Pysiotherephy,1/1/22,1/31/22,4100,Jason Brown,English Meadows Louisa Campus,Chronical ,Dementia,Paid,80
+75,A731434,Stewart Wilson,Doctor Visit,1/1/22,1/31/22,3300,Jason Brown,Brighter Living Assisted Living,Chronical ,Fracture ,Not Paid,87
+76,A810998,Wanda Hughes,Pysiotherephy,1/1/22,1/31/22,3000,Elizabeth Taylor,Cardinal Senior Living,Disability ,Dementia,Not Paid,73
+77,A141665,Sonia Mitchell,Pysiotherephy,1/1/22,1/31/22,4900,Leonard Poole,Fredericksburg Assisted Living,Chronical ,Dementia,Paid,96
+78,A945032,Christopher Smith,Medications ,1/1/22,1/31/22,3300,Steven Morrison,Brighter Living Assisted Living,Chronical ,Cancer,Not Paid,93
+79,A108399,Lisa Welch,Doctor Visit,1/1/22,1/31/22,3500,Faith Ross,English Meadows Louisa Campus,Chronical ,Fracture ,Not Paid,78
+80,A963034,Colin Burgess,Doctor Visit,1/1/22,1/31/22,5500,Austin Mitchell,English Meadows Louisa Campus,Disability ,Cancer,Not Paid,73
+81,A296188,Sarah Martin,Daily Activities ,1/1/22,1/31/22,6000,Lily Langdon,Fredericksburg Assisted Living,Chronical ,Cancer,Paid,94
+82,A428219,Diane Murray,Pysiotherephy,1/1/22,1/31/22,3100,Steven Morrison,English Meadows Louisa Campus,Chronical ,Spinal,Not Paid,72
+83,A508225,Andrew Robertson,Daily Activities ,1/1/22,1/31/22,4100,Jason Brown,Bethel Helping Hands,Chronical ,Cancer,Not Paid,75
+84,A109493,Sam Arnold,Medications ,1/1/22,1/31/22,5100,Angela Ball,Cardinal Senior Living,Disability ,Dementia,Paid,85
+85,A627802,Blake Lee,Pysiotherephy,1/1/22,1/31/22,5700,Dominic James,Bethel Helping Hands,Disability ,Dementia,Not Paid,94
+86,A780341,Sam Robertson,Daily Activities ,1/1/22,1/31/22,3600,Leonard Poole,Brighter Living Assisted Living,Disability ,Dementia,Paid,97
+87,A971780,Benjamin McGrath,Daily Activities ,1/1/22,1/31/22,3100,Lily Langdon,Fredericksburg Assisted Living,Disability ,Alzheimer,Paid,88
+88,A572143,Anthony Abraham,Medications ,1/1/22,1/31/22,4200,Lily Langdon,Bethel Helping Hands,Disability ,Dementia,Paid,91
+89,A653848,Piers Mitchell,Pysiotherephy,1/1/22,1/31/22,3000,Faith Ross,English Meadows Louisa Campus,Disability ,Fracture ,Not Paid,70
+90,A703392,Wendy Scott,Doctor Visit,1/1/22,1/31/22,5900,Dominic James,Bethel Helping Hands,Disability ,Fracture ,Paid,98
+91,A556069,Julia Campbell,Medications ,1/1/22,1/31/22,5500,Dominic James,Brighter Living Assisted Living,Disability ,Alzheimer,Paid,91
+92,A612301,Madeleine Lambert,Medications ,1/1/22,1/31/22,3500,Sarah Campbell,Bethel Helping Hands,Disability ,Fracture ,Not Paid,77
+93,A606553,Sam Carr,Doctor Visit,1/1/22,1/31/22,4400,Steven Morrison,Cardinal Senior Living,Disability ,Alzheimer,Paid,80
+94,A106593,Sarah Rutherford,Daily Activities ,1/1/22,1/31/22,4600,Lily Langdon,Brighter Living Assisted Living,Disability ,Fracture ,Paid,96
+95,A443350,Sebastian Young,Daily Activities ,1/1/22,1/31/22,5000,Leonard Poole,Brighter Living Assisted Living,Disability ,Cancer,Paid,89
+96,A530828,Jane Baker,Daily Activities ,1/1/22,1/31/22,6000,Faith Ross,Brighter Living Assisted Living,Chronical ,Spinal,Paid,93
+97,A284109,Kylie McGrath,Medications ,1/1/22,1/31/22,5900,Dominic James,Fredericksburg Assisted Living,Chronical ,Spinal,Not Paid,82
+98,A459453,Nicholas Russell,Doctor Visit,1/1/22,1/31/22,5100,Elizabeth Taylor,Bethel Helping Hands,Chronical ,Spinal,Paid,97
+99,A811589,Michelle Powell,Doctor Visit,1/1/22,1/31/22,4600,Sarah Campbell,Bethel Helping Hands,Chronical ,Spinal,Paid,99
+100,A897548,Rebecca Parsons,Pysiotherephy,1/1/22,1/31/22,3200,Leonard Poole,Bethel Helping Hands,Disability ,Dementia,Paid,100

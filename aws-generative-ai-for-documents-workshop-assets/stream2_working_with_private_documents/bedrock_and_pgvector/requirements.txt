@@ -1,0 +1,13 @@
+streamlit
+langchain==0.0.229
+PyPDF2==3.0.1
+python-dotenv
+psycopg2-binary==2.9.6
+altair==4.0
+pgvector==0.1.8
+InstructorEmbedding==1.0.1
+sentence-transformers==2.2.2
+urllib3==1.26.6
+langchain-community
+wikipedia
+fpdf

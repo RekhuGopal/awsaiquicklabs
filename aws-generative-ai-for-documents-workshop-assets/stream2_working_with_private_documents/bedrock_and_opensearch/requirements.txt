@@ -1,0 +1,7 @@
+streamlit==1.23.0
+langchain-community
+wikipedia
+opensearch-py
+requests_aws4auth
+awscurl
+fpdf

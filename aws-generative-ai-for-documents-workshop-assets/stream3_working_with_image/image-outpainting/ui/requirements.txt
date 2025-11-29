@@ -1,0 +1,5 @@
+boto3
+streamlit
+requests_auth_aws_sigv4
+requests
+pillow

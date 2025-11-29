@@ -1,0 +1,20 @@
+2023-10-14T12:34:56Z,ERROR,Failed to connect to database,db-server-1,12345,abcde-12345-fghij
+2023-10-14T12:34:57Z,INFO,Connection established,db-server-1,12346,fghij-67890-klmno
+2023-10-14T12:34:58Z,WARN,Query execution slow,db-server-1,12347,klmno-23456-pqrst
+2023-10-14T12:34:59Z,ERROR,Database timeout error,db-server-2,12348,lmnop-34567-rstuv
+2023-10-14T12:35:00Z,WARN,High memory usage detected,db-server-1,12349,rstuv-45678-uvwxy
+2023-10-14T12:35:01Z,WARN,Slow response from cache server,db-server-2,12350,uvwxy-56789-xyzab
+2023-10-14T12:35:02Z,INFO,User authentication successful,db-server-1,12351,xyzab-67890-abccd
+2023-10-14T12:35:03Z,INFO,New user registration,db-server-2,12352,abccd-78901-cddef
+2023-10-14T12:35:04Z,INFO,Cache server connected,db-server-1,12353,cddef-89012-defgh
+2023-10-14T12:35:05Z,INFO,Data replication started,db-server-2,12354,defgh-90123-efghi
+2023-10-14T12:35:06Z,INFO,Data replication completed,db-server-1,12355,efghi-01234-fghij
+2023-10-14T12:35:07Z,INFO,Backup initiated,db-server-2,12356,fghij-12345-ghijk
+2023-10-14T12:35:08Z,INFO,Backup completed,db-server-1,12357,ghijk-23456-hijkl
+2023-10-14T12:35:09Z,INFO,Query optimization started,db-server-2,12358,hijkl-34567-ijklm
+2023-10-14T12:35:10Z,INFO,Query optimization completed,db-server-1,12359,ijklm-45678-jklmn
+2023-10-14T12:35:11Z,INFO,Database maintenance scheduled,db-server-2,12360,jklmn-56789-klmno
+2023-10-14T12:35:12Z,INFO,Database maintenance completed,db-server-1,12361,klmno-67890-lmnop
+2023-10-14T12:35:13Z,INFO,New database version available,db-server-2,12362,lmnop-78901-mnopq
+2023-10-14T12:35:14Z,INFO,Database upgrade started,db-server-1,12363,mnopq-89012-nopqr
+2023-10-14T12:35:15Z,INFO,Database upgrade completed,db-server-2,12364,nopqr-90123-opqrs

@@ -1,0 +1,1097 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::LanguageExtensions'
+Description: AWS CloudFormation template for 'Using generative AI for diverse content types' workshop
+Parameters:
+  VSCodeUser:
+    Type: String
+    Description: UserName for Visual Studio Code Server
+    Default: ec2-user
+  WorkshopInstanceName:
+    Type: String
+    Description: Name of the VS Code EC2 Instance Name
+    Default: aws-genai-workshop
+  WorkshopInstanceVolumeSize:
+    Type: Number
+    Description: The VS Code EC2 instance volume size in GB
+    Default: 50  
+  WorkshopInstanceType:
+    Description: Workshop VS Code instance type
+    Type: String
+    Default: m5.large
+    AllowedValues: [
+      c4.large, c4.xlarge, c4.2xlarge, c4.4xlarge, c4.8xlarge,
+      c5.large, c5.xlarge, c5.2xlarge, c5.4xlarge, c5.9xlarge, c5.12xlarge, c5.18xlarge, c5.24xlarge,
+      c5a.large, c5a.xlarge, c5a.2xlarge, c5a.4xlarge, c5a.8xlarge, c5a.12xlarge, c5a.16xlarge, c5a.24xlarge,
+      c5ad.large, c5ad.xlarge, c5ad.2xlarge, c5ad.4xlarge, c5ad.8xlarge, c5ad.12xlarge, c5ad.16xlarge, c5ad.24xlarge,
+      c5d.large, c5d.xlarge, c5d.2xlarge, c5d.4xlarge, c5d.9xlarge, c5d.12xlarge, c5d.18xlarge, c5d.24xlarge,
+      c5n.large, c5n.xlarge, c5n.2xlarge, c5n.4xlarge, c5n.9xlarge, c5n.18xlarge,
+      c6a.large, c6a.xlarge, c6a.2xlarge, c6a.4xlarge, c6a.8xlarge, c6a.12xlarge, c6a.16xlarge, c6a.24xlarge, c6a.32xlarge, c6a.48xlarge,
+      c6g.medium, c6g.large, c6g.xlarge, c6g.2xlarge, c6g.4xlarge, c6g.8xlarge, c6g.12xlarge, c6g.16xlarge,
+      c6gd.medium, c6gd.large, c6gd.xlarge, c6gd.2xlarge, c6gd.4xlarge, c6gd.8xlarge, c6gd.12xlarge, c6gd.16xlarge,
+      c6gn.medium, c6gn.large, c6gn.xlarge, c6gn.2xlarge, c6gn.4xlarge, c6gn.8xlarge, c6gn.12xlarge, c6gn.16xlarge,
+      c6i.large, c6i.xlarge, c6i.2xlarge, c6i.4xlarge, c6i.8xlarge, c6i.12xlarge, c6i.16xlarge, c6i.24xlarge, c6i.32xlarge,
+      c7g.medium, c7g.large, c7g.xlarge, c7g.2xlarge, c7g.4xlarge, c7g.8xlarge, c7g.12xlarge, c7g.16xlarge,
+      c7gd.medium, c7gd.large, c7gd.xlarge, c7gd.2xlarge, c7gd.4xlarge, c7gd.8xlarge, c7gd.12xlarge, c7gd.16xlarge,
+      c7gn.medium, c7gn.large, c7gn.xlarge, c7gn.2xlarge, c7gn.4xlarge, c7gn.8xlarge, c7gn.12xlarge, c7gn.16xlarge,
+      c7i.large, c7i.xlarge, c7i.2xlarge, c7i.4xlarge, c7i.8xlarge, c7i.12xlarge, c7i.16xlarge, c7i.24xlarge, c7i.48xlarge,
+      m4.large, m4.xlarge, m4.2xlarge, m4.4xlarge, m4.10xlarge, m4.16xlarge,
+      m5.large, m5.xlarge, m5.2xlarge, m5.4xlarge, m5.8xlarge, m5.12xlarge, m5.16xlarge, m5.24xlarge,
+      m5a.large, m5a.xlarge, m5a.2xlarge, m5a.4xlarge, m5a.8xlarge, m5a.12xlarge, m5a.16xlarge, m5a.24xlarge,
+      m6a.large, m6a.xlarge, m6a.2xlarge, m6a.4xlarge, m6a.8xlarge, m6a.12xlarge, m6a.16xlarge, m6a.24xlarge, m6a.32xlarge, m6a.48xlarge,
+      m7a.medium, m7a.large, m7a.xlarge, m7a.2xlarge, m7a.4xlarge, m7a.8xlarge, m7a.12xlarge, m7a.16xlarge, m7a.24xlarge, m7a.32xlarge, m7a.48xlarge,
+      m7g.medium, m7g.large, m7g.xlarge, m7g.2xlarge, m7g.4xlarge, m7g.8xlarge, m7g.12xlarge, m7g.16xlarge,
+      m7gd.medium, m7gd.large, m7gd.xlarge, m7gd.2xlarge, m7gd.4xlarge, m7gd.8xlarge, m7gd.12xlarge, m7gd.16xlarge,
+      m7i.large, m7i.xlarge, m7i.2xlarge, m7i.4xlarge, m7i.8xlarge, m7i.12xlarge, m7i.16xlarge, m7i.24xlarge, m7i.48xlarge,
+      t2.nano, t2.micro, t2.small, t2.medium, t2.large, t2.xlarge, t2.2xlarge,
+      t3.nano, t3.micro, t3.small, t3.medium, t3.large, t3.xlarge, t3.2xlarge,
+      t3a.nano, t3a.micro, t3a.small, t3a.medium, t3a.large, t3a.xlarge, t3a.2xlarge,
+      t4g.nano, t4g.micro, t4g.small, t4g.medium, t4g.large, t4g.xlarge, t4g.2xlarge
+    ]
+    ConstraintDescription: Must be a valid instance type
+
+  InstanceAmiId:
+      Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+      Description: AMI ID parameter path for the VSCode instance
+      Default: '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64'
+      # aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/" --recursive --query "Parameters[*].Name"  > canonical-ami.txt
+      # aws ssm get-parameters-by-path --path "/aws/service/ami-amazon-linux-latest/" --recursive --query "Parameters[*].Name"  > amazon-ami.txt
+      AllowedValues: [
+        '/aws/service/canonical/ubuntu/server/focal/stable/current/arm64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/focal/stable/current/arm64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/focal/stable/current/amd64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server/jammy/stable/current/arm64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server/jammy/stable/current/amd64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/jammy/stable/current/arm64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/jammy/stable/current/amd64/hvm/ebs-gp2/ami-id',
+        '/aws/service/canonical/ubuntu/server/noble/stable/current/arm64/hvm/ebs-gp3/ami-id',
+        '/aws/service/canonical/ubuntu/server/noble/stable/current/amd64/hvm/ebs-gp3/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/noble/stable/current/arm64/hvm/ebs-gp3/ami-id',
+        '/aws/service/canonical/ubuntu/server-minimal/noble/stable/current/amd64/hvm/ebs-gp3/ami-id',
+        '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64',
+        '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64',
+        '/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-arm64',
+        '/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-x86_64',
+        '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2',
+        '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+      ]    
+  HomeFolder:
+    Type: String
+    Description: Folder to open in VS Code server
+    Default: environment
+  DevServerBasePath:
+    Type: String
+    Description: The base path for the application to be added to nginx sites-available list
+    Default: app
+  DevServerPort:
+    Type: Number
+    Description: The port for the DevServer
+    Default: 8081
+
+Mappings: 
+  AssetsMap: 
+    eu-north-1:
+      "AssetBucket": "ws-assets-prod-iad-r-arn-580aeca3990cef5a"    
+    ap-south-1:
+      "AssetBucket": "ws-assets-prod-iad-r-bom-431207042d319a2d"    
+    eu-west-3:
+      "AssetBucket": "ws-assets-prod-iad-r-cdg-9e76383c31ad6229"    
+    us-east-2:
+      "AssetBucket": "ws-assets-prod-iad-r-cmh-8d6e9c21a4dec77d"    
+    eu-west-1:
+      "AssetBucket": "ws-assets-prod-iad-r-dub-85e3be25bd827406"    
+    eu-central-1:
+      "AssetBucket": "ws-assets-prod-iad-r-fra-b129423e91500967"    
+    sa-east-1:
+      "AssetBucket": "ws-assets-prod-iad-r-gru-527b8c19222c1182"    
+    us-east-1:
+      "AssetBucket": "ws-assets-prod-iad-r-iad-ed304a55c2ca1aee"    
+    ap-northeast-2:
+      "AssetBucket": "ws-assets-prod-iad-r-icn-ced060f0d38bc0b0"    
+    ap-northeast-3:
+      "AssetBucket": "ws-assets-prod-iad-r-kix-c2a28ad4e55ea53a"    
+    eu-west-2:
+      "AssetBucket": "ws-assets-prod-iad-r-lhr-cc4472a651221311"    
+    ap-northeast-1:
+      "AssetBucket": "ws-assets-prod-iad-r-nrt-2cb4b4649d0e0f94"    
+    us-west-2:
+      "AssetBucket": "ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0"    
+    us-west-1:
+      "AssetBucket": "ws-assets-prod-iad-r-sfo-f61fc67057535f1b"    
+    ap-southeast-1:
+      "AssetBucket": "ws-assets-prod-iad-r-sin-694a125e41645312"    
+    ap-southeast-2:
+      "AssetBucket": "ws-assets-prod-iad-r-syd-b04c62a5f16f7b2e"    
+    ca-central-1:
+      "AssetBucket": "ws-assets-prod-iad-r-yul-5c2977cd61bca1f3"    
+
+  AWSRegions2PrefixListID:
+    ap-northeast-1:
+      PrefixList: pl-58a04531
+    ap-northeast-2:
+      PrefixList: pl-22a6434b
+    ap-south-1:
+      PrefixList: pl-9aa247f3
+    ap-southeast-1:
+      PrefixList: pl-31a34658
+    ap-southeast-2:
+      PrefixList: pl-b8a742d1
+    ca-central-1:
+      PrefixList: pl-38a64351
+    eu-central-1:
+      PrefixList: pl-a3a144ca
+    eu-north-1:
+      PrefixList: pl-fab65393
+    eu-west-1:
+      PrefixList: pl-4fa04526
+    eu-west-2:
+      PrefixList: pl-93a247fa
+    eu-west-3:
+      PrefixList: pl-75b1541c
+    sa-east-1:
+      PrefixList: pl-5da64334
+    us-east-1:
+      PrefixList: pl-3b927c52
+    us-east-2:
+      PrefixList: pl-b6a144df
+    us-west-1:
+      PrefixList: pl-4ea04527
+    us-west-2:
+      PrefixList: pl-82a045eb    
+
+Resources:
+  # 1. Create workshop IAM Role
+  WorkshopRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+              - kendra.amazonaws.com
+              - ec2.amazonaws.com
+              - ssm.amazonaws.com
+              - cloud9.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AdministratorAccess
+      - arn:aws:iam::aws:policy/AWSCloud9SSMInstanceProfile 
+
+  WorkshopVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+
+  # Creating 4 Subnets
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: "10.0.1.0/24"
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      MapPublicIpOnLaunch: "true"
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: "10.0.2.0/24"
+      AvailabilityZone: !Select [ 1, !GetAZs "" ]
+      MapPublicIpOnLaunch: "true"
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: "10.0.3.0/24"
+      AvailabilityZone: !Select [ 2, !GetAZs "" ]
+      MapPublicIpOnLaunch: "false"
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: "10.0.4.0/24"
+      AvailabilityZone: !Select [ 3, !GetAZs "" ]
+      MapPublicIpOnLaunch: "false"
+
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+
+  AttachGateway:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # NAT Gateway
+  EIPForNAT:
+    Type: "AWS::EC2::EIP"
+
+  NATGateway:
+    Type: "AWS::EC2::NatGateway"
+    Properties:
+      AllocationId: !GetAtt EIPForNAT.AllocationId
+      SubnetId: !Ref PublicSubnetA
+
+  # Route Tables
+  PublicRouteTableA:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+
+  PublicRouteA:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PublicRouteTableA
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref InternetGateway
+
+  PublicRouteTableB:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+
+  PublicRouteB:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PublicRouteTableB
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref InternetGateway
+
+  PrivateRouteTableA:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+
+  PrivateRouteTableB:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+
+  PrivateRouteA:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref NATGateway
+
+  PrivateRouteB:
+    Type: "AWS::EC2::Route"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref NATGateway
+
+  # Associate Route Tables to Subnets
+  PublicSubnetRouteTableAssociationA:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTableA
+
+  PublicSubnetRouteTableAssociationB:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTableB
+
+  PrivateSubnetARouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+
+  PrivateSubnetBRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
+
+  VPCSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Security Group allowing all TCP traffic inbound and outbound'
+      VpcId: !Ref WorkshopVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '0'
+          ToPort: '65535'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: '0'
+          ToPort: '65535'
+          CidrIp: '0.0.0.0/0'
+
+  AmazonBedrockExecutionRoleForKnowledgeBase:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: AmazonBedrockExecutionRoleForKnowledgeBase_workshop_role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - bedrock.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/AdministratorAccess
+ 
+
+  RandomStringLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - !Sub lambda.${AWS::URLSuffix}
+          Action:
+          - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  RandomStringLambda:
+    Type: AWS::Lambda::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: Cloud9LambdaExecutionRole has the AWSLambdaBasicExecutionRole managed policy attached, allowing writing to CloudWatch logs
+          - id: W89
+            reason: Bootstrap function does not need the scaffolding of a VPC or provisioned concurrency
+          - id: W92
+            reason: Bootstrap function does not need provisioned concurrency
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt RandomStringLambdaRole.Arn
+      MemorySize: 128
+      Timeout: 20
+      Code:
+        ZipFile: |
+          const response = require("cfn-response");
+
+          const generateRandomString = (length, chars) => {
+              var result = '';
+              for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+              return result;
+          };
+
+          exports.handler = (event, context) => {
+            console.log (event)
+            var characters = '';
+            var randomString = '';
+
+            if (event['ResourceProperties']['RequireEachIncludedType'] ?? false) {
+              if (!(event['ResourceProperties']['ExcludeLowercase'] ?? false)) {
+                characters += 'abcdefghijklmnopqrstuvwxyz';
+                randomString += generateRandomString(1, 'abcdefghijklmnopqrstuvwxyz');
+              }
+              if (!(event['ResourceProperties']['ExcludeUppercase'] ?? false)) {
+                characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                randomString += generateRandomString(1, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+              }
+              if (!(event['ResourceProperties']['ExcludeNumbers'] ?? false)) {
+                characters += '0123456789';
+                randomString += generateRandomString(1, '0123456789');
+              }
+              if (!(event['ResourceProperties']['ExcludePunctuation'] ?? false)) {
+                characters += '!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+                randomString += generateRandomString(1, '!@#$%^&*()_+-={}[]:";\'<>?,./|\\');
+              }
+            } else {
+              if (!(event['ResourceProperties']['ExcludeLowercase'] ?? false)) {
+                characters += 'abcdefghijklmnopqrstuvwxyz';
+              }
+              if (!(event['ResourceProperties']['ExcludeUppercase'] ?? false)) {
+                characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+              }
+              if (!(event['ResourceProperties']['ExcludeNumbers'] ?? false)) {
+                characters += '0123456789';
+              }
+              if (!(event['ResourceProperties']['ExcludePunctuation'] ?? false)) {
+                characters += '!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+              }
+            }
+            randomString += generateRandomString(event['ResourceProperties']['Length'] - randomString.length, characters);
+            var shuffledString = randomString.split('').sort(function(){return 0.5-Math.random()}).join('');
+            const responseData = {RandomString: shuffledString};
+            response.send(event, context, response.SUCCESS, responseData);
+          };
+
+  ########### SSM Resources ###########
+  VSCodePassword:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt RandomStringLambda.Arn
+      Length: 8
+      RequireEachIncludedType: false
+      ExcludePunctuation: true
+
+  VSCodeSecret:
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: Secrets Manager Secret should explicitly specify KmsKeyId to allow secret to be shared cross-account - this is not required for this secret as it is generated per-account.
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      Name: !Ref WorkshopInstanceName
+      Description: VSCode user details
+      SecretString: !Sub '{"username":"${VSCodeUser}","password":"${VSCodePassword.RandomString}"}'
+
+  SSMLogBucket:
+    Type: AWS::S3::Bucket
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: Access logs aren't needed for this bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+################## SSM BOOTSRAP HANDLER ###############
+  WorkshopOutputBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+
+  WorkshopSSMDocument: 
+    Type: AWS::SSM::Document
+    Properties: 
+      Tags:
+        - Key: Environment
+          Value: AWS Workshop
+      DocumentType: Command
+      Content: 
+        schemaVersion: '2.2'
+        description: Bootstrap VSCode code-server instance
+        mainSteps:
+        - action: aws:runShellScript
+          name: AddUser
+          inputs:
+            runCommand:
+              - '#!/bin/bash'
+              - !Sub |
+                if [[ "${VSCodeUser}" == "ec2-user" ]]
+                then
+                  echo 'Using existing user: ${VSCodeUser}'
+                else
+                  echo 'Adding user: ${VSCodeUser}'
+                  useradd -m -G sudo ${VSCodeUser}
+                  echo "${VSCodeUser}:${VSCodePassword.RandomString}" | chpasswd
+                fi
+              - !Sub mkdir -p /home/${VSCodeUser}
+              - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+              - echo "Checking configuration"
+              - cat /etc/passwd
+
+        - action: aws:runShellScript
+          name: UpdateProfile
+          inputs:
+            runCommand:
+              - '#!/bin/bash'
+              - 'echo "LANG=en_US.utf-8" >> /etc/environment'
+              - 'echo "LC_ALL=en_US.UTF-8" >> /etc/environment'
+              - !Sub 'echo "PATH=$PATH:/home/${VSCodeUser}/.local/bin" >> /home/${VSCodeUser}/.bashrc'
+              - !Sub 'echo "export PATH" >> /home/${VSCodeUser}/.bashrc'
+              - !Sub 'echo "export AWS_REGION=${AWS::Region}" >> /home/${VSCodeUser}/.bashrc'
+              - !Sub 'echo "export ACCOUNT_ID=${AWS::AccountId}" >> /home/${VSCodeUser}/.bashrc'
+              - !Sub 'echo "export NEXT_TELEMETRY_DISABLED=1" >> /home/${VSCodeUser}/.bashrc'
+              - !Sub 'touch /home/${VSCodeUser}/.hushlogin'
+              - !Sub 'chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}'                               
+
+        - action: aws:runShellScript
+          name: Workshopbootstrap
+          inputs:
+            timeoutSeconds: '3600'
+            runCommand:
+            - "#!/bin/bash"
+            - date
+            - echo LANG=en_US.utf-8 >> /etc/environment
+            - echo LC_ALL=en_US.UTF-8 >> /etc/environment
+            - echo '=== INSTALL and CONFIGURE default software components ==='   
+            - sudo yum install -y zlib zlib-devel gcc gcc-c++ openssl-devel bzip2-devel libffi-devel make automake autoconf libtool which
+            - sudo ln -sf /usr/bin/python3 /usr/bin/python
+            - sudo yum install -y python3-pip
+            - sudo yum -y remove awscli                
+            - !Sub . /home/${VSCodeUser}/.bashrc            
+            - !Sub |
+              mkdir -p /home/${VSCodeUser}/.aws
+              echo "[default]" > /home/${VSCodeUser}/.aws/config
+              echo "output = json" >> /home/${VSCodeUser}/.aws/config
+              echo "region = ${AWS::Region}" >> /home/${VSCodeUser}/.aws/config
+              chmod 600 /home/${VSCodeUser}/.aws/config
+            - !Sub sudo su ${VSCodeUser} -c "mkdir -p /home/${VSCodeUser}/${HomeFolder}"
+            - !Sub sudo su ${VSCodeUser} -c "chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}/${HomeFolder}"
+            - !Sub sudo su ${VSCodeUser} -c "curl https://ws-assets-prod-iad-r-iad-ed304a55c2ca1aee.s3.us-east-1.amazonaws.com/104a9291-764e-4e57-a548-b205bd4281c0/aws-generative-ai-for-documents-workshop-assets.zip -o /home/${VSCodeUser}/${HomeFolder}/aws-generative-ai-for-documents-workshop-assets.zip"
+            - !Sub sudo su ${VSCodeUser} -c "unzip -o /home/${VSCodeUser}/${HomeFolder}/aws-generative-ai-for-documents-workshop-assets.zip -d /home/${VSCodeUser}/${HomeFolder}/"
+            - !Sub sudo su ${VSCodeUser} -c "rm -f /home/${VSCodeUser}/${HomeFolder}/aws-generative-ai-for-documents-workshop-assets.zip" 
+            - !Sub sudo su - ${VSCodeUser} -c "/usr/bin/python3 -m pip install --upgrade aws-sam-cli"               
+            - !Sub sudo su - ${VSCodeUser} -c "/usr/bin/python3 -m pip install --upgrade awscli"    
+            - !Sub sudo su - ${VSCodeUser} -c "/usr/bin/python3 -m pip install --upgrade boto3"                     
+
+        - action: aws:runShellScript
+          name: ConfigureCodeServer
+          inputs:
+            runCommand:
+              - '#!/bin/bash'
+              - yum install -y nginx whois argon2 openssl
+              # - mkpasswd -m help
+              - !Sub export HOME=/home/${VSCodeUser}
+              - curl -fsSL https://code-server.dev/install.sh | sh -s -- 2>&1
+              - !Sub sudo systemctl enable --now code-server@${VSCodeUser} 2>&1
+              - !Sub |
+                sudo tee /etc/nginx/conf.d/code-server.conf <<EOF
+                server {
+                    listen 80;
+                    listen [::]:80;
+                    server_name ${CloudFrontDistribution.DomainName};
+                    location / {
+                      proxy_pass http://localhost:8080/;
+                      proxy_set_header Host \$host;
+                      proxy_set_header Upgrade \$http_upgrade;
+                      proxy_set_header Connection upgrade;
+                      proxy_set_header Accept-Encoding gzip;
+                    }
+                    location /${DevServerBasePath} {
+                      proxy_pass http://localhost:${DevServerPort}/${DevServerBasePath};
+                      proxy_set_header Host \$host;
+                      proxy_set_header Upgrade \$http_upgrade;
+                      proxy_set_header Connection upgrade;
+                      proxy_set_header Accept-Encoding gzip;
+                    }
+                }
+                EOF
+              - !Sub mkdir -p /home/${VSCodeUser}/.config/code-server
+              - !Sub |
+                sudo tee /home/${VSCodeUser}/.config/code-server/config.yaml <<EOF
+                cert: false
+                auth: password
+                hashed-password: "$(echo -n ${VSCodePassword.RandomString} | argon2 $(openssl rand -base64 12) -e)"
+                EOF
+              # - hashed-password: "$(echo -n ${VSCodePassword.RandomString} | argon2-cli -e)"
+              # - hashed-password: "$(echo -n $(mkpasswd -m sha-512 ${VSCodePassword.RandomString}))"
+              - !Sub mkdir -p /home/${VSCodeUser}/.local/share/code-server/User/
+              - !Sub |
+                sudo tee /home/${VSCodeUser}/.local/share/code-server/User/settings.json <<EOF
+                {
+                  "extensions.autoUpdate": false,
+                  "extensions.autoCheckUpdates": false,
+                  "terminal.integrated.cwd": "/home/${VSCodeUser}/${HomeFolder}",
+                  "telemetry.telemetryLevel": "off",
+                  "security.workspace.trust.startupPrompt": "never",
+                  "security.workspace.trust.enabled": false,
+                  "security.workspace.trust.banner": "never",
+                  "security.workspace.trust.emptyWindow": false,
+                  "editor.indentSize": "tabSize",
+                  "editor.tabSize": 2,
+                  "python.testing.pytestEnabled": true,
+                  "auto-run-command.rules": [
+                    {
+                      "command": "workbench.action.terminal.new"
+                    }
+                  ],
+                  "workbench.colorTheme": "Default Dark+"
+                }
+                EOF
+              - !Sub chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}
+              - !Sub sudo systemctl restart code-server@${VSCodeUser}
+              - sudo sed -i '/http {/a\    client_max_body_size 200m;' /etc/nginx/nginx.conf
+              - sudo systemctl restart nginx
+              - !Sub 'sudo su - ${VSCodeUser} -c "code-server --install-extension AmazonWebServices.amazon-q-vscode --force"'
+              - !Sub 'sudo su - ${VSCodeUser} -c "code-server --install-extension synedra.auto-run-command --force"'
+              - !Sub 'sudo su - ${VSCodeUser} -c "code-server --install-extension vscjava.vscode-java-pack --force"'
+              - !Sub 'sudo su - ${VSCodeUser} -c "code-server --install-extension ms-vscode.live-server --force"'
+              - !Sub 'chown -R ${VSCodeUser}:${VSCodeUser} /home/${VSCodeUser}'
+
+  WorkshopBootstrapAssociation: 
+    Type: AWS::SSM::Association
+    DependsOn: 
+      - WorkshopOutputBucket
+      - WorkshopInstance
+    Properties: 
+      Name: !Ref WorkshopSSMDocument
+      OutputLocation: 
+        S3Location:
+          OutputS3BucketName: !Ref WorkshopOutputBucket
+          OutputS3KeyPrefix: bootstrapoutput
+      Targets:
+        - Key: tag:SSMBootstrap
+          Values: [True]
+
+  ################## INSTANCE #####################
+  WorkshopInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: WorkshopRole
+
+  WorkshopInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for VSCodeServer - only allow CloudFront ingress
+      VpcId: !Ref WorkshopVPC
+      SecurityGroupIngress:
+        - Description: Allow HTTP from com.amazonaws.global.cloudfront.origin-facing
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourcePrefixListId:  !FindInMap [AWSRegions2PrefixListID, !Ref 'AWS::Region', PrefixList]
+        - Description: Allow TCP ports 8501-8520
+          IpProtocol: tcp
+          FromPort: 8501
+          ToPort: 8520
+          CidrIp: 0.0.0.0/0          
+
+
+  WorkshopInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - Ebs:
+            VolumeSize: !Ref WorkshopInstanceVolumeSize
+            VolumeType: gp3
+            DeleteOnTermination: true
+            Encrypted: true
+          DeviceName: /dev/xvda
+      Monitoring: true
+      ImageId: !Ref InstanceAmiId
+      InstanceType: !Ref WorkshopInstanceType
+      SecurityGroupIds:
+        - !GetAtt WorkshopInstanceSecurityGroup.GroupId
+      SubnetId: !Ref PublicSubnetA        
+      IamInstanceProfile: !Ref WorkshopInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #cloud-config
+          hostname: ${WorkshopInstanceName}
+          runcmd:
+            - !Sub mkdir -p ${HomeFolder} && chown ${VSCodeUser}:${VSCodeUser} ${HomeFolder}
+      Tags:
+      - Key: SSMBootstrap
+        Value: True
+      - Key: Name
+        Value: !Ref WorkshopInstanceName
+
+  ########### CloudFront Resources ###########
+  VSCodeInstanceCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        Name: !Join ['-', ['VSCodeServer', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: all
+          EnableAcceptEncodingGzip: False
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - Accept-Charset
+              - Authorization
+              - Origin
+              - Accept
+              - Referer
+              - Host
+              - Accept-Language
+              - Accept-Encoding
+              - Accept-Datetime
+          QueryStringsConfig:
+            QueryStringBehavior: all
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: True
+        HttpVersion: http2
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - PATCH
+              - POST
+              - DELETE
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled
+            Compress: False
+            OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3 # Managed-AllViewer - see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html#:~:text=When%20using%20AWS,47e4%2Db989%2D5492eafa07d3
+            TargetOriginId: !Sub CloudFront-${AWS::StackName}
+            ViewerProtocolPolicy: allow-all
+            PathPattern: '/proxy/*'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
+          CachePolicyId: !Ref VSCodeInstanceCachePolicy
+          OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3 # Managed-AllViewer - see https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html#:~:text=When%20using%20AWS,47e4%2Db989%2D5492eafa07d3
+          TargetOriginId: !Sub CloudFront-${AWS::StackName}
+          ViewerProtocolPolicy: allow-all
+        Origins:
+          - DomainName: !GetAtt WorkshopInstance.PublicDnsName
+            Id: !Sub CloudFront-${AWS::StackName}
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+  
+  # S3 Interface VPC Endpoint
+  S3VpcEndpoint:
+    Type: "AWS::EC2::VPCEndpoint"
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      RouteTableIds:
+        - !Ref PublicRouteTableA
+        - !Ref PublicRouteTableB
+        - !Ref PrivateRouteTableA
+        - !Ref PrivateRouteTableB
+      VpcEndpointType: "Gateway"
+
+  SecretsManagerVPCEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      VpcId: !Ref WorkshopVPC # Replace with your VPC ID
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.secretsmanager'
+      VpcEndpointType: 'Interface'
+      SubnetIds: 
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref VPCSecurityGroup
+
+
+  WorkshopPostgreDBSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupDescription: "Subnet group for RDS instance"
+      SubnetIds:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+        
+  WorkshopAuroraDBCluster:
+    Type: "AWS::RDS::DBCluster"
+    Properties:
+      DBClusterIdentifier: "WorkshopDBCluster"
+      Engine: "aurora-postgresql"
+      EngineVersion: "15.5"
+      MasterUsername: "workshopUser"
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${WorkshopPostgreRDSSecret}:SecretString:password}}'
+      VpcSecurityGroupIds:
+        - !Ref VPCSecurityGroup
+      DBSubnetGroupName: !Ref WorkshopPostgreDBSubnetGroup
+      EnableHttpEndpoint: true
+
+  WorkshopAuroraDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "WorkshopDBInstance"
+      DBInstanceClass: "db.r5.large"
+      Engine: "aurora-postgresql"
+      DBClusterIdentifier: !Ref WorkshopAuroraDBCluster
+      PubliclyAccessible: "false"
+
+  WorkshopPostgreRDSSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'postgres_vectors_secrets'
+      Description: 'This is my RDS secret'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "workshopUser", "port": "5432", "dbname": "vectordb"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+          
+  MySQLRDSSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'mysql_secrets'
+      Description: 'This is my MySQL RDS secret'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mysqlUser", "port": "3306", "dbname": "sales"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+  MySQLDBInstance:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceIdentifier: "MySQLDBInstance"
+      AllocatedStorage: "20"
+      DBInstanceClass: "db.t3.micro"
+      Engine: "mysql"
+      MasterUsername: "mysqlUser"
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${MySQLRDSSecret}:SecretString:password}}'
+      VPCSecurityGroups:
+        - !Ref VPCSecurityGroup
+      DBSubnetGroupName: !Ref WorkshopPostgreDBSubnetGroup
+      PubliclyAccessible: "false"
+
+  
+  AOSSVpcEndpoint:
+    Type: 'AWS::OpenSearchServerless::VpcEndpoint'
+    Properties:
+      Name: aoss-vpce
+      VpcId: !Ref WorkshopVPC
+      SubnetIds: 
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VPCSecurityGroup
+
+  # Encryption Policy for OpenSearch Serverless Collection
+  WorkshopCollectionEncryptionPolicy:
+    Type: "AWS::OpenSearchServerless::SecurityPolicy"
+    Properties:
+      Name: "workshop-enc-policy"  # Shortened name to fit within limits
+      Type: "encryption"
+      Description: "Encryption policy for workshop-collection"
+      Policy: !Sub |
+        {
+          "Rules": [
+            {
+              "ResourceType": "collection",
+              "Resource": ["collection/workshop-collection"]
+            }
+          ],
+          "AWSOwnedKey": true
+        }
+
+  WorkshopCollectionNetworkPolicy:
+    Type: 'AWS::OpenSearchServerless::SecurityPolicy'
+    Properties:
+      Name: aoss-network-policy
+      Type: network
+      Description: Network policy for test collections
+      Policy: !Sub 
+        - >-
+            [
+               {
+                  "Description": "VPC access for log collections",
+                  "Rules": [
+                     {
+                        "ResourceType": "collection",
+                        "Resource": ["collection/workshop-collection"]
+                     }
+                  ],
+                  "AllowFromPublic": true
+               }
+            ]
+        - VpcEndpoint: !Ref AOSSVpcEndpoint
+
+  # OpenSearch Serverless Collection
+  WorkshopCollection:
+    Type: "AWS::OpenSearchServerless::Collection"
+    Properties:
+      Name: "workshop-collection"
+      Type: "VECTORSEARCH" # or VECTORSEARCH, TIMESERIES based on your need
+      Description: "OpenSearch Serverless Collection for workshop"
+    DependsOn: "WorkshopCollectionEncryptionPolicy"
+
+
+  AOSSAccessPolicy:
+    Type: 'AWS::OpenSearchServerless::AccessPolicy'
+    Properties:
+      Name: aoss-access-policy
+      Type: data
+      Description: Access policy for aoss-collection
+      Policy: 
+        !Sub 
+          - |
+            [
+              {
+                "Description": "Access for test-user",
+                "Rules": [
+                  {
+                    "ResourceType": "index",
+                    "Resource": ["index/*/*"],
+                    "Permission": ["aoss:*"]
+                  },
+                  {
+                    "ResourceType": "collection",
+                    "Resource": ["collection/workshop-collection"],
+                    "Permission": ["aoss:*"]
+                  }
+                ],
+                "Principal": ["${WorkshopRoleArn}","${AmazonBedrockExecutionRoleARN}"]
+              }
+            ]
+          - WorkshopRoleArn: !GetAtt WorkshopRole.Arn
+            AmazonBedrockExecutionRoleARN: !GetAtt AmazonBedrockExecutionRoleForKnowledgeBase.Arn
+
+
+  OpenSearchServerlessSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'opensearch_serverless_secrets'
+      Description: 'This is my OpenSearch secret'
+      SecretString: !Sub
+        - '{"host": "${Host}", "index_name": "workshop_index"}'
+        - Host: !GetAtt WorkshopCollection.CollectionEndpoint
+
+  # Kendra Index
+  WorkshopKendraIndex:
+    Type: "AWS::Kendra::Index"
+    Properties:
+      Name: "GenAIWorkshopKendraIndex"
+      RoleArn: !GetAtt WorkshopRole.Arn # Ensure you have a Kendra role with necessary permissions
+      Description: "Kendra index for searching documents"
+      Edition: "DEVELOPER_EDITION"
+
+  UUIDGeneratorFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.lambda_handler
+      Role: !GetAtt WorkshopRole.Arn
+      FunctionName: UUIDGeneratorFunction
+      MemorySize: 1024
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          import uuid
+          import cfnresponse
+          def lambda_handler(event, context):
+            responseData = {}
+            responseData['UUID'] = str(uuid.uuid4())
+            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourcePhysicalID")
+            return status
+      Runtime: python3.10
+
+  WorkshopKendraSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'kendra_secrets'
+      Description: 'This is kendra secret'
+      SecretString: !Sub
+        - '{"index_id": "${IndexId}"}'
+        - IndexId: !GetAtt WorkshopKendraIndex.Id
+
+
+  UUIDGenerator:
+    Type: 'Custom::UUIDGenerator'
+    Properties:
+      ServiceToken: !GetAtt UUIDGeneratorFunction.Arn
+
+  WorkshopPostgreS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'mybucketprefix-${UUIDGenerator.UUID}'
+
+
+  OpenSearchS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'opensearchs3bucket-${UUIDGenerator.UUID}'
+
+Outputs:
+  AuroraDBClusterARN:
+    Description: "ARN of the Aurora PostgreSQL cluster."
+    Value: !GetAtt WorkshopAuroraDBCluster.DBClusterArn
+
+  AuroraDBWriterEndpoint:
+    Description: "Writer Endpoint of the Aurora PostgreSQL cluster."
+    Value: !GetAtt WorkshopAuroraDBCluster.Endpoint.Address
+
+  WorkshopKendraIndexId:
+    Description: "Kendra Index ID"
+    Value: !Ref WorkshopKendraIndex
+
+  WorkshopKendraIndexArn:
+    Description: "Kendra Index ARN"
+    Value: !GetAtt WorkshopKendraIndex.Arn
+
+  OpenSearchCollectionEndpoint:
+    Description: "OpenSearch Serverless Collection Endpoint"
+    Value: !GetAtt [WorkshopCollection, CollectionEndpoint]
+    
+  WorkshopPostgreS3BucketName:
+    Description: "S3 bucket PostgreSQL"
+    Value: !Ref WorkshopPostgreS3Bucket
+
+  WorkshopPostgreS3BucketARN:
+    Description: "ARN of the S3 Bucket"
+    Value: !GetAtt WorkshopPostgreS3Bucket.Arn
+
+  OpenSearchS3Bucket:
+    Description: "S3 bucket for OpenSearch"
+    Value: !Ref OpenSearchS3Bucket
+
+  WorkshopRoleArn:
+    Description: "ARN of the WorkshopRole"
+    Value: !GetAtt WorkshopRole.Arn
+
+  RDSDBPassword:
+    Description: "The password for the RDS DB instance"
+    Value: !Sub '{{resolve:secretsmanager:${WorkshopPostgreRDSSecret}:SecretString:password}}'
+
+  WorkshopOutputBucket:
+    Description: "S3 bucket for workshop"
+    Value: !Ref WorkshopOutputBucket  
+    
+  MySQLEndpoint:
+    Description: "The endpoint of the MySQL RDS instance"
+    Value: !GetAtt MySQLDBInstance.Endpoint.Address
+
+  VpcId:
+    Description: "The VPC Id"
+    Value: !Ref WorkshopVPC
+
+  AmazonBedrockExecutionRoleARN:
+    Description: "Amazon Bedrock Execution Role ARN"
+    Value: !GetAtt AmazonBedrockExecutionRoleForKnowledgeBase.Arn
+
+  OpenSearchCollectionArn:
+    Description: "OpenSearch Serverless Collection Endpoint"
+    Value: !GetAtt [WorkshopCollection, Arn]
+
+  OpenSearchS3BucketARN:
+    Description: "ARN of the S3 bucket for OpenSearch"
+    Value: !GetAtt OpenSearchS3Bucket.Arn
+
+  Password:
+    Description: VSCode-Server Password
+    Value: !GetAtt VSCodePassword.RandomString
+  URL:
+    Description: VSCode-Server URL
+    Value: !Sub https://${CloudFrontDistribution.DomainName}/?folder=/home/${VSCodeUser}/${HomeFolder}
