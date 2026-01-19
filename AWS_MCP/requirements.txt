@@ -1,0 +1,5 @@
+bedrock-agentcore-starter-toolkit
+boto3
+botocore   
+mcp
+mcp-cli

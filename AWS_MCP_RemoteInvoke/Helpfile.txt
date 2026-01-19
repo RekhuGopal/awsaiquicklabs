@@ -1,0 +1,23 @@
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# Upgrade pip
+python -m pip install --upgrade pip
+
+# Install AgentCore toolkit
+pip install bedrock-agentcore-starter-toolkit
+
+
+# Daily Use
+# Activate venv
+.\.venv\Scripts\Activate.ps1
+
+# Configure MCP server
+agentcore configure -e my_mcp_server.py --protocol MCP
+
+
+agentcore --version
+where agentcore
